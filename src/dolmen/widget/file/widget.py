@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import grok
-from dolmen.file import INamedFile, IFileField
+import grokcore.view as grok
+
 from zope.size import byteDisplay
 from zope.interface import Interface, implements
 from zope.component import getMultiAdapter
@@ -12,11 +12,13 @@ from z3c.form.browser import file
 from z3c.form.widget import FieldWidget
 from z3c.form.interfaces import DISPLAY_MODE, INPUT_MODE, NOVALUE
 from z3c.form.interfaces import IFieldWidget, IFormLayer, IDataManager
+from dolmen.file import INamedFile, IFileField
 
 
 class IFileWidget(Interface):
-    """Fill me
+    """A widget that represents a file.
     """
+
 
 class FileWidget(file.FileWidget):
     """A widget for a named file object
@@ -59,16 +61,19 @@ class FileWidget(file.FileWidget):
 
     def extract(self, default=NOVALUE):
         nochange = self.request.get("%s.nochange" % self.name, None)
+ 
         if nochange == 'nochange':
             dm = getMultiAdapter((self.context, self.field), IDataManager)
             return dm.get()
+        elif nochange == 'delete':
+            return None
         else:
             return file.FileWidget.extract(self, default)
 
 
-from zope.interface import Interface
 class FileWidgetInput(z3cform.WidgetTemplate):
     grok.context(Interface)
+    grok.layer(IFormLayer)
     grok.template('templates/input.pt')
     z3cform.directives.field(IFileField)
     z3cform.directives.mode(INPUT_MODE)
@@ -76,6 +81,7 @@ class FileWidgetInput(z3cform.WidgetTemplate):
 
 class FileWidgetDisplay(z3cform.WidgetTemplate):
     grok.context(Interface)
+    grok.layer(IFormLayer)
     grok.template('templates/display.pt')
     z3cform.directives.field(IFileField)
     z3cform.directives.mode(DISPLAY_MODE)

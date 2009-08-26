@@ -45,6 +45,18 @@
 	i18n:translate="file_keep">Keep existing file</label>
     <br />
     <input type="radio"
+	   value="delete"
+	   class="noborder"
+	   tal:condition="python: exists and download_url"
+	   tal:attributes="name string:${view/name}.nochange;
+			   id string:${view/id}-delete;
+			   onclick string:document.getElementById('${view/id}-input').disabled=true;"
+            />
+    <label
+	tal:attributes="for string:${view/id}-delete"
+	i18n:translate="file_delete">Delete existing file</label>
+    <br />
+    <input type="radio"
 	   value=""
 	   class="noborder"
 	   tal:attributes="name string:${view/name}.nochange;
