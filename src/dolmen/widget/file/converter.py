@@ -15,4 +15,6 @@ class RawDataConverter(BaseDataConverter, grok.MultiAdapter):
         return value
 
     def toFieldValue(self, value):
+        if not value:
+            return None
         return value
