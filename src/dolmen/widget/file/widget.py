@@ -7,7 +7,7 @@ from zope.interface import Interface, implements
 from zope.component import getMultiAdapter
 from zope.traversing.browser.absoluteurl import absoluteURL
 
-import megrok.z3cform as z3cform
+import megrok.z3cform.base as z3cform
 from z3c.form.browser import file
 from z3c.form.widget import FieldWidget
 from z3c.form.interfaces import DISPLAY_MODE, INPUT_MODE, NOVALUE

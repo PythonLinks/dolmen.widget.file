@@ -3,8 +3,8 @@
     xmlns="http://namespaces.zope.org/zope">
 
   <include package="dolmen.file" />
-  <include package="megrok.z3cform" file="meta.zcml" />
   <include package="grokcore.component" file="meta.zcml" />
+  <include package="megrok.z3cform.base" file="meta.zcml" />
   <grok:grok package="." />
 
 </configure>
