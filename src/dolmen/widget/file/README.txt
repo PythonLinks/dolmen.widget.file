@@ -30,7 +30,7 @@ a file field::
 
 
 We now have a travel mammoth on which we can add a luggage. Now, we
-need a form to edit the animal:
+need a form to edit the animal::
 
   >>> from megrok.z3cform.base import EditForm
   >>> class EditMammoth(EditForm):
