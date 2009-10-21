@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import grokcore.view as grok
+import megrok.z3cform.base as z3cform
 
 from zope.size import byteDisplay
 from zope.interface import Interface, implements
 from zope.component import getMultiAdapter
 from zope.traversing.browser.absoluteurl import absoluteURL
+from zope.cachedescriptors.property import CachedProperty
 
-import megrok.z3cform.base as z3cform
 from z3c.form.browser import file
-from z3c.form.widget import FieldWidget
-from z3c.form.interfaces import DISPLAY_MODE, INPUT_MODE, NOVALUE
-from z3c.form.interfaces import IFieldWidget, IFormLayer, IDataManager
 from dolmen.file import INamedFile, IFileField
 
 
@@ -29,7 +27,10 @@ class FileWidget(file.FileWidget):
 
     def update(self):
         file.FileWidget.update(self)
-        self.url = absoluteURL(self.context, self.request)
+        try:
+            self.url = absoluteURL(self.context, self.request)
+        except TypeError:
+            self.url = None
         
     @property
     def allow_nochange(self):
@@ -38,57 +39,61 @@ class FileWidget(file.FileWidget):
                    self.value is not None and \
                    self.value != self.field.missing_value
 
-    @property
+    @CachedProperty
     def filename(self):           
         if INamedFile.providedBy(self.value):
             return self.value.filename
         return None
  
-    @property
+    @CachedProperty
     def file_size(self):
         if INamedFile.providedBy(self.value):
             size = self.value.getSize()
             return {'raw': size, 'display': byteDisplay(size)}
         return None
 
-    @property
+    @CachedProperty
     def download_url(self):
-        if self.field is None:
-            return None
-        if self.ignoreContext:
+        if self.field is None or self.ignoreContext or not self.url:
             return None
         return '%s/++download++%s' % (self.url, self.field.__name__)
 
-    def extract(self, default=NOVALUE):
+    def extract(self, default=z3cform.NOVALUE):
+        """Looks at the selected option to decide which action
+        is to be executed : nothing, replace, delete.
+        """
         nochange = self.request.get("%s.nochange" % self.name, None)
  
         if nochange == 'nochange':
-            dm = getMultiAdapter((self.context, self.field), IDataManager)
+            dm = getMultiAdapter(
+                (self.context, self.field), z3cform.IDataManager)
             return dm.get()
         elif nochange == 'delete':
-            return None
+            return default
         else:
             return file.FileWidget.extract(self, default)
 
 
 class FileWidgetInput(z3cform.WidgetTemplate):
     grok.context(Interface)
-    grok.layer(IFormLayer)
+    grok.layer(z3cform.IFormLayer)
     grok.template('templates/input.pt')
     z3cform.directives.field(IFileField)
-    z3cform.directives.mode(INPUT_MODE)
+    z3cform.directives.widget(IFileWidget)
+    z3cform.directives.mode(z3cform.INPUT_MODE)
 
 
 class FileWidgetDisplay(z3cform.WidgetTemplate):
     grok.context(Interface)
-    grok.layer(IFormLayer)
+    grok.layer(z3cform.IFormLayer)
     grok.template('templates/display.pt')
     z3cform.directives.field(IFileField)
-    z3cform.directives.mode(DISPLAY_MODE)
+    z3cform.directives.widget(IFileWidget)
+    z3cform.directives.mode(z3cform.DISPLAY_MODE)
 
 
-@grok.adapter(IFileField, IFormLayer)
-@grok.implementer(IFieldWidget)
+@grok.adapter(IFileField, z3cform.IFormLayer)
+@grok.implementer(z3cform.IFieldWidget)
 def FileFieldWidget(field, request):
     """IFieldWidget factory for FileWidget."""
-    return FieldWidget(field, FileWidget(request))
+    return z3cform.FieldWidget(field, FileWidget(request))

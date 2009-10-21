@@ -1,2 +1,2 @@
-from dolmen.widget.file.widget import FileWidget, FileFieldWidget
-from dolmen.widget.file.converter import RawDataConverter
+from dolmen.widget.file.widget import IFileWidget, FileWidget, FileFieldWidget
+from dolmen.widget.file.converter import UploadToNamedFile

@@ -1,5 +1,5 @@
 <span
-    i18n:domain="dolmen"
+    i18n:domain="dolmen.widget.file"
     tal:attributes="id view/id;
                     class view/klass;
                     style view/style;
@@ -29,7 +29,8 @@
     <a tal:content="view/filename"
        tal:attributes="href download_url"
        >Filename</a> &mdash;
-    <span tal:content="view/file_size/display" />
+    <span tal:condition="view/file_size"
+	  tal:content="view/file_size/display|nothing" />
   </span>
   <div tal:condition="view/allow_nochange" style="padding-top: 1em;">
     <input type="radio"
