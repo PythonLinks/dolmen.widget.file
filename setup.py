@@ -2,26 +2,33 @@ from setuptools import setup, find_packages
 from os.path import join
 
 name = 'dolmen.widget.file'
-version = '0.2dev'
+version = '0.2'
 readme = open(join('src', 'dolmen', 'widget', 'file', 'README.txt')).read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
 install_requires = [
-    'setuptools',
-    'dolmen.file>=0.1',
-    'megrok.z3cform.base>=0.1',
-    'z3c.form>=2.1',
+    'dolmen.file >= 0.5.1',
     'grokcore.component',
-    'zope.size',
+    'grokcore.view',
+    'megrok.z3cform.base >= 0.1',
+    'setuptools',
+    'z3c.form',
+    'zope.cachedescriptors',
     'zope.component',
     'zope.interface',
+    'zope.size',
     'zope.traversing',
     ]
 
-tests_require = install_requires + [
+tests_require = [
+    'zope.site',
     'zope.testing',
-    'zope.app.testing',
-    'zope.app.zcmlfiles',
+    'zope.container',
+    'zope.publisher',
+    'zope.schema',
+    'zope.security',
+    'zope.i18n',
+    'zope.app.pagetemplate',
     ]
 
 setup(name = name,

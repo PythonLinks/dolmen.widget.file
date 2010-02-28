@@ -3,7 +3,7 @@
 import grokcore.view as grok
 import megrok.z3cform.base as z3cform
 
-from zope.size import byteDisplay
+from zope.size.interfaces import ISized
 from zope.interface import Interface, implements
 from zope.component import getMultiAdapter
 from zope.traversing.browser.absoluteurl import absoluteURL
@@ -31,7 +31,7 @@ class FileWidget(file.FileWidget):
             self.url = absoluteURL(self.context, self.request)
         except TypeError:
             self.url = None
-        
+
     @property
     def allow_nochange(self):
         return not self.ignoreContext and \
@@ -47,10 +47,7 @@ class FileWidget(file.FileWidget):
  
     @CachedProperty
     def file_size(self):
-        if INamedFile.providedBy(self.value):
-            size = self.value.getSize()
-            return {'raw': size, 'display': byteDisplay(size)}
-        return None
+        return ISized(self.value, None)
 
     @CachedProperty
     def download_url(self):
@@ -70,8 +67,8 @@ class FileWidget(file.FileWidget):
             return dm.get()
         elif nochange == 'delete':
             return default
-        else:
-            return file.FileWidget.extract(self, default)
+
+        return file.FileWidget.extract(self, default)
 
 
 class FileWidgetInput(z3cform.WidgetTemplate):
