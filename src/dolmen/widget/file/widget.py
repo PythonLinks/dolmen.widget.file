@@ -40,11 +40,11 @@ class FileWidget(file.FileWidget):
                    self.value != self.field.missing_value
 
     @CachedProperty
-    def filename(self):           
+    def filename(self):
         if INamedFile.providedBy(self.value):
             return self.value.filename
         return None
- 
+
     @CachedProperty
     def file_size(self):
         return ISized(self.value, None)
@@ -60,7 +60,7 @@ class FileWidget(file.FileWidget):
         is to be executed : nothing, replace, delete.
         """
         nochange = self.request.get("%s.nochange" % self.name, None)
- 
+
         if nochange == 'nochange':
             dm = getMultiAdapter(
                 (self.context, self.field), z3cform.IDataManager)
