@@ -28,6 +28,8 @@ tests_require = [
     'zope.schema',
     'zope.security',
     'zope.i18n',
+    # This one is needed because z3c.form doesn't declare all
+    # the needed dependencies.
     'zope.app.pagetemplate',
     ]
 
