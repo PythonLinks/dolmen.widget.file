@@ -1,16 +1,13 @@
-<span id="" class="" i18n:domain="dolmen.widget.file"
-      tal:attributes="id view/id; class view/klass;"
-      tal:define="value view/value;
-		  exists python:value is not None">
-  <span tal:define="fieldname view/field/__name__ | nothing;
-		    filename view/filename;"
-	tal:condition="python: exists and fieldname">
-    <a tal:content="filename"
-       tal:attributes="href view/download_url">Filename</a> &mdash;
-    <span tal:condition="view/file_size"
-	  tal:content="view/file_size/sizeForDisplay" />
+<span i18n:domain="dolmen.widget.file"
+      tal:attributes="id widget/htmlId;">
+  <span tal:condition="widget/download">
+    <a tal:content="widget/filename"
+       tal:attributes="href widget/download">Filename</a> &mdash;
+    <span tal:condition="widget/filesize"
+	  tal:content="widget/filesize/sizeForDisplay" />
   </span>
-  <span tal:condition="not:exists" class="discreet" i18n:translate="no_file">
+  <span tal:condition="not:widget/download"
+	class="discreet" i18n:translate="no_file">
     No file
   </span>
 </span>

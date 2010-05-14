@@ -1,96 +1,107 @@
 # -*- coding: utf-8 -*-
 
 import grokcore.view as grok
-import megrok.z3cform.base as z3cform
 
-from zope.size.interfaces import ISized
-from zope.interface import Interface, implements
-from zope.component import getMultiAdapter
-from zope.traversing.browser.absoluteurl import absoluteURL
-from zope.cachedescriptors.property import CachedProperty
-
-from z3c.form.browser import file
 from dolmen.file import INamedFile, IFileField
+from dolmen.widget.file import MF as _
+from zeam.form.base import interfaces, NO_VALUE, NO_CHANGE
+from zeam.form.base.widgets import DisplayFieldWidget, WidgetExtractor
+from zeam.form.ztk.fields import (
+    SchemaFieldWidget, SchemaField, registerSchemaField)
+
+from zope.interface import Interface
+from zope.location import ILocation
+from zope.size.interfaces import ISized
+from zope.traversing.browser.absoluteurl import absoluteURL
+
+KEEP = "keep"
+DELETE = "delete"
+REPLACE = "replace"
+
+grok.templatedir('templates')
 
 
-class IFileWidget(Interface):
+class IFileWidget(interfaces.IFieldWidget):
     """A widget that represents a file.
     """
 
 
-class FileWidget(file.FileWidget):
-    """A widget for a named file object
+class FileSchemaField(SchemaField):
+    """A file field.
     """
-    klass = u'file-widget'
-    value = None
-    implements(IFileWidget)
+
+registerSchemaField(FileSchemaField, IFileField)
+
+
+class FileWidget(SchemaFieldWidget):
+    grok.implements(IFileWidget)
+    grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
+    grok.template('input')
+
+    url = None
+    filesize = None
+    filename = None
+    download = None
+    allow_action = True
+
+    def prepareContentValue(self, value):
+        if value is NO_VALUE:
+            self.allow_action = False
+            return {self.identifier: False}
+        return {self.identifier: True}
 
     def update(self):
-        file.FileWidget.update(self)
-        try:
-            self.url = absoluteURL(self.context, self.request)
-        except TypeError:
-            self.url = None
+        SchemaFieldWidget.update(self)
 
-    @property
-    def allow_nochange(self):
-        return not self.ignoreContext and \
-                   self.field is not None and \
-                   self.value is not None and \
-                   self.value != self.field.missing_value
+        if not self.form.ignoreContent:
+            fileobj = self.component._field.get(self.form.context)
 
-    @CachedProperty
-    def filename(self):
-        if INamedFile.providedBy(self.value):
-            return self.value.filename
-        return None
+            if fileobj:
+                if INamedFile.providedBy(fileobj):
+                    self.filename = fileobj.filename
+                    self.filesize = ISized(fileobj, None)
+                else:
+                    self.filename = _(u'download', default=u"Download")
 
-    @CachedProperty
-    def file_size(self):
-        return ISized(self.value, None)
-
-    @CachedProperty
-    def download_url(self):
-        if self.field is None or self.ignoreContext or not self.url:
-            return None
-        return '%s/++download++%s' % (self.url, self.field.__name__)
-
-    def extract(self, default=z3cform.NOVALUE):
-        """Looks at the selected option to decide which action
-        is to be executed : nothing, replace, delete.
-        """
-        nochange = self.request.get("%s.nochange" % self.name, None)
-
-        if nochange == 'nochange':
-            dm = getMultiAdapter(
-                (self.context, self.field), z3cform.IDataManager)
-            return dm.get()
-        elif nochange == 'delete':
-            return default
-
-        return file.FileWidget.extract(self, default)
+                if ILocation.providedBy(self.form.context):
+                    self.url = absoluteURL(self.form.context, self.request)
+                    self.download = "%s/++download++%s" % (
+                        self.url, self.component.identifier)
 
 
-class FileWidgetInput(z3cform.WidgetTemplate):
-    grok.context(Interface)
-    grok.layer(z3cform.IFormLayer)
-    grok.template('templates/input.pt')
-    z3cform.directives.field(IFileField)
-    z3cform.directives.widget(IFileWidget)
-    z3cform.directives.mode(z3cform.INPUT_MODE)
+class DisplayFileWidget(DisplayFieldWidget):
+    grok.implements(IFileWidget)
+    grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
+    grok.template('display')
+
+    url = None
+    filesize = None
+    filename = None
+    download = None
+
+    def update(self):
+        DisplayFieldWidget.update(self)
+        fileobj = self.component._field.get(self.form.context)
+
+        if fileobj:
+            if INamedFile.providedBy(fileobj):
+                self.filename = fileobj.filename
+                self.filesize = ISized(fileobj, None)
+
+            self.url = absoluteURL(self.form.context, self.request)
+            self.download = "%s/++download++%s" % (
+                self.url, self.component.identifier)
 
 
-class FileWidgetDisplay(z3cform.WidgetTemplate):
-    grok.context(Interface)
-    grok.layer(z3cform.IFormLayer)
-    grok.template('templates/display.pt')
-    z3cform.directives.field(IFileField)
-    z3cform.directives.widget(IFileWidget)
-    z3cform.directives.mode(z3cform.DISPLAY_MODE)
+class FileWidgetExtractor(WidgetExtractor):
+    grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
 
-
-@grok.adapter(IFileField, z3cform.IFormLayer)
-@grok.implementer(z3cform.IFieldWidget)
-def FileFieldWidget(field, request):
-    """IFieldWidget factory for FileWidget."""
-    return z3cform.FieldWidget(field, FileWidget(request))
+    def extract(self):
+        action = self.request.form.get(self.identifier + '.action', None)
+        if action == KEEP:
+            value = NO_CHANGE
+        elif action == DELETE:
+            value = NO_VALUE
+        else:
+            value = self.request.form.get(self.identifier) or NO_VALUE
+        return (value, None)
