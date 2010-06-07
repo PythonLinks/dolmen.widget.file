@@ -94,14 +94,25 @@ class DisplayFileWidget(DisplayFieldWidget):
 
 
 class FileWidgetExtractor(WidgetExtractor):
+    """A value extractor for a file widget (including image)
+    """
     grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
 
     def extract(self):
+        """This method allows us to decide what we do with the different
+        options of our field. We handle the 3 options, here :
+        keep, replace, delete.
+        """
         action = self.request.form.get(self.identifier + '.action', None)
         if action == KEEP:
+            # We return a marker that is understood by the form datamanager.
             value = NO_CHANGE
         elif action == DELETE:
-            value = NO_VALUE
+            # We explicitly return None instead of  NO_VALUE
+            # File storage should take this in consideration
+            value = None
         else:
+            # Return the value if it exists or a marker uderstood by the
+            # form datamanager.
             value = self.request.form.get(self.identifier) or NO_VALUE
         return (value, None)
