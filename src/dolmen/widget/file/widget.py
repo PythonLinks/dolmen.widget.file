@@ -42,11 +42,10 @@ class FileWidget(SchemaFieldWidget):
     filesize = None
     filename = None
     download = None
-    allow_action = True
+    allow_action = False
 
     def prepareContentValue(self, value):
-        if value is NO_VALUE:
-            self.allow_action = False
+        if value is NO_VALUE or value is None:
             return {self.identifier: False}
         return {self.identifier: True}
 
@@ -57,6 +56,7 @@ class FileWidget(SchemaFieldWidget):
             fileobj = self.component._field.get(self.form.context)
 
             if fileobj:
+                self.allow_action = True
                 if INamedFile.providedBy(fileobj):
                     self.filename = fileobj.filename
                     self.filesize = ISized(fileobj, None)
