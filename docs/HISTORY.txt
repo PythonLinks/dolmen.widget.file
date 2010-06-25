@@ -1,15 +1,24 @@
 Changelog
 =========
 
-1.0 alpha 2 (2010-06-19)
-------------------------
+1.0a3 (2010-06-25)
+------------------
+
+* We no longer user the `registerField` function from ``zeam.form.ztk``,
+  but directly provide the adapter thanks to Grok, instead. This
+  solves initialisation priority preventing the correct field
+  registration.
+
+
+1.0a2 (2010-06-19)
+------------------
 
 * Corrected a bug that allowed actions to appear when form submission
   errors occured.
 
 
-1.0 alpha 1 (2010-05-14)
-------------------------
+1.0a1 (2010-05-14)
+------------------
 
 * Major change : the widget is now meant to be used in `zeam.form`.
   Dolmen is no longer using `z3c.form`.

@@ -6,9 +6,7 @@ from dolmen.file import INamedFile, IFileField
 from dolmen.widget.file import MF as _
 from zeam.form.base import interfaces, NO_VALUE, NO_CHANGE
 from zeam.form.base.widgets import DisplayFieldWidget, WidgetExtractor
-from zeam.form.ztk.fields import (
-    SchemaFieldWidget, SchemaField, registerSchemaField)
-
+from zeam.form.ztk.fields import SchemaField, SchemaFieldWidget
 from zope.interface import Interface
 from zope.location import ILocation
 from zope.size.interfaces import ISized
@@ -20,7 +18,7 @@ REPLACE = "replace"
 
 grok.templatedir('templates')
 
-
+    
 class IFileWidget(interfaces.IFieldWidget):
     """A widget that represents a file.
     """
@@ -30,7 +28,8 @@ class FileSchemaField(SchemaField):
     """A file field.
     """
 
-registerSchemaField(FileSchemaField, IFileField)
+
+grok.global_adapter(FileSchemaField, (IFileField,), interfaces.IField)
 
 
 class FileWidget(SchemaFieldWidget):
