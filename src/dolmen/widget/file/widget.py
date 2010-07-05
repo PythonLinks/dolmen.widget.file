@@ -5,8 +5,11 @@ import grokcore.view as grok
 from dolmen.file import INamedFile, IFileField
 from dolmen.widget.file import MF as _
 from zeam.form.base import interfaces, NO_VALUE, NO_CHANGE
+from zeam.form.base.markers import DISPLAY, INPUT
 from zeam.form.base.widgets import DisplayFieldWidget, WidgetExtractor
-from zeam.form.ztk.fields import SchemaField, SchemaFieldWidget
+from zeam.form.ztk.fields import (
+    SchemaField, SchemaFieldWidget, registerSchemaField)
+
 from zope.interface import Interface
 from zope.location import ILocation
 from zope.size.interfaces import ISized
@@ -18,7 +21,13 @@ REPLACE = "replace"
 
 grok.templatedir('templates')
 
-    
+
+def register():
+    """Entry point hook.
+    """
+    registerSchemaField(FileSchemaField, IFileField)
+
+
 class IFileWidget(interfaces.IFieldWidget):
     """A widget that represents a file.
     """
@@ -29,13 +38,10 @@ class FileSchemaField(SchemaField):
     """
 
 
-grok.global_adapter(FileSchemaField, (IFileField,), interfaces.IField)
-
-
 class FileWidget(SchemaFieldWidget):
     grok.implements(IFileWidget)
     grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
-    grok.template('input')
+    grok.template(str(INPUT))
 
     url = None
     filesize = None
@@ -71,7 +77,7 @@ class FileWidget(SchemaFieldWidget):
 class DisplayFileWidget(DisplayFieldWidget):
     grok.implements(IFileWidget)
     grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
-    grok.template('display')
+    grok.template(str(DISPLAY))
 
     url = None
     filesize = None

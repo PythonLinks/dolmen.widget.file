@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from os.path import join
 
 name = 'dolmen.widget.file'
-version = '1.0a3'
+version = '1.0b1'
 readme = open(join('src', 'dolmen', 'widget', 'file', 'README.txt')).read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
@@ -16,8 +16,8 @@ install_requires = [
     'zope.i18n',
     'zope.location',
     'zope.traversing',
-    'zeam.form.base >= 1.0b4',
-    'zeam.form.ztk >= 1.0b3',
+    'zeam.form.base >= 1.0rc1',
+    'zeam.form.ztk >= 1.0rc1',
     'zope.i18nmessageid',
     ]
 
@@ -53,7 +53,7 @@ setup(name = name,
       extras_require = {'test': tests_require},
       test_suite="dolmen.widget.file",
       classifiers = [
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 4 - Beta',
           'Environment :: Web Environment',
           'Framework :: Zope3',
           'Intended Audience :: Other Audience',
@@ -61,4 +61,9 @@ setup(name = name,
           'Operating System :: OS Independent',
           'Programming Language :: Python',
           ],
+      entry_points="""
+      # -*- Entry points: -*-
+      [zeam.form.components]
+      file = dolmen.widget.file.widget:register
+      """,
 )
