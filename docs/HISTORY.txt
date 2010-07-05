@@ -11,6 +11,7 @@ Changelog
 * The widget mode registration is now done using the __str__
   representation of the appropriate markers.
 
+
 1.0a3 (2010-06-25)
 ------------------
 
