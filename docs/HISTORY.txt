@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0b2 (2010-11-22)
+------------------
+
+* We now retrieve the form content using the proper API
+  (getContentData / getContent).
+
+
 1.0b1 (2010-07-05)
 ------------------
 
