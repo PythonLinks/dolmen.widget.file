@@ -58,7 +58,8 @@ class FileWidget(SchemaFieldWidget):
         SchemaFieldWidget.update(self)
 
         if not self.form.ignoreContent:
-            fileobj = self.component._field.get(self.form.context)
+            content = self.form.getContentData().getContent()
+            fileobj = self.component._field.get(content)
 
             if fileobj:
                 self.allow_action = True
@@ -68,8 +69,8 @@ class FileWidget(SchemaFieldWidget):
                 else:
                     self.filename = _(u'download', default=u"Download")
 
-                if ILocation.providedBy(self.form.context):
-                    self.url = absoluteURL(self.form.context, self.request)
+                if ILocation.providedBy(content):
+                    self.url = absoluteURL(content, self.request)
                     self.download = "%s/++download++%s" % (
                         self.url, self.component.identifier)
 
@@ -86,14 +87,15 @@ class DisplayFileWidget(DisplayFieldWidget):
 
     def update(self):
         DisplayFieldWidget.update(self)
-        fileobj = self.component._field.get(self.form.context)
+        content = self.form.getContentData().getContent()
+        fileobj = self.component._field.get(content)
 
         if fileobj:
             if INamedFile.providedBy(fileobj):
                 self.filename = fileobj.filename
                 self.filesize = ISized(fileobj, None)
 
-            self.url = absoluteURL(self.form.context, self.request)
+            self.url = absoluteURL(content, self.request)
             self.download = "%s/++download++%s" % (
                 self.url, self.component.identifier)
 

@@ -18,10 +18,8 @@ a file field::
   >>> from zope.interface import Interface
   >>> from zope.schema.fieldproperty import FieldProperty
 
-
   >>> class ITravelMount(Interface):
   ...   luggage = dolmen.file.FileField(title=u'Luggages')
-
 
   >>> class Mammoth(grok.Context):
   ...   grok.implements(ITravelMount)
