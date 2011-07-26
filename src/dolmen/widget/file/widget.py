@@ -99,7 +99,7 @@ class DisplayFileWidget(DisplayFieldWidget):
                 self.filename = fileobj.filename
                 self.filesize = ISized(fileobj, None)
 
-            self.url = absoluteURL(content, self.request)
+            self.url = get_absolute_url(content, self.request)
             self.download = "%s/++download++%s" % (
                 self.url, self.component.identifier)
 
