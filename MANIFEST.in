@@ -1,2 +1,3 @@
-recursive-include src/dolmen/widget/file *.txt *.py *.zcml *.pt *.po *.mo
+include README.txt
+recursive-include src *.txt *.py *.zcml *.pt *.po *.mo
 recursive-include docs *.txt

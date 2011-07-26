@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0a1 (2011-07-26)
+------------------
+
+* The widget is now ready to be used with Cromlech.
+
+
 1.0b2 (2010-11-22)
 ------------------
 
