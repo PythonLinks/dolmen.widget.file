@@ -7,7 +7,6 @@ from dolmen.location import get_absolute_url
 from dolmen.template import TALTemplate
 from dolmen.widget.file import MF as _
 from dolmen.forms.base import interfaces, NO_VALUE, NO_CHANGE
-from dolmen.forms.base.markers import DISPLAY, INPUT
 from dolmen.forms.base.widgets import DisplayFieldWidget, WidgetExtractor
 from dolmen.forms.ztk.fields import (
     SchemaField, SchemaFieldWidget, registerSchemaField)

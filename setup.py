@@ -9,10 +9,11 @@ readme = open('README.txt').read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
 install_requires = [
-    'dolmen.file >= 2.0a1',
     'grokcore.component',
     'setuptools',
     'dolmen.location',
+    'cromlech.file',
+    'dolmen.template',
     'zope.interface',
     'zope.size',
     'zope.i18n',
@@ -25,6 +26,7 @@ install_requires = [
 tests_require = [
     'zope.component',
     'zope.schema',
+    'cromlech.io [test]',
     'cromlech.browser [test]',
     ]
 
