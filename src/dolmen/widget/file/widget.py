@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
 
-import grokcore.view as grok
+from os import path
 
-from dolmen.file import INamedFile, IFileField
+from cromlech.file import IFile, IFileField
+from dolmen.location import get_absolute_url
+from dolmen.template import TALTemplate
 from dolmen.widget.file import MF as _
-from zeam.form.base import interfaces, NO_VALUE, NO_CHANGE
-from zeam.form.base.markers import DISPLAY, INPUT
-from zeam.form.base.widgets import DisplayFieldWidget, WidgetExtractor
-from zeam.form.ztk.fields import (
+from dolmen.forms.base import interfaces, NO_VALUE, NO_CHANGE
+from dolmen.forms.base.markers import DISPLAY, INPUT
+from dolmen.forms.base.widgets import DisplayFieldWidget, WidgetExtractor
+from dolmen.forms.ztk.fields import (
     SchemaField, SchemaFieldWidget, registerSchemaField)
 
-from zope.interface import Interface
+from grokcore.component import adapts
+from zope.interface import Interface, implements
 from zope.location import ILocation
 from zope.size.interfaces import ISized
-from zope.traversing.browser.absoluteurl import absoluteURL
+
 
 KEEP = "keep"
 DELETE = "delete"
 REPLACE = "replace"
-
-grok.templatedir('templates')
+TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 
 
 def register():
@@ -39,15 +41,17 @@ class FileSchemaField(SchemaField):
 
 
 class FileWidget(SchemaFieldWidget):
-    grok.implements(IFileWidget)
-    grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
-    grok.template(str(INPUT))
+    implements(IFileWidget)
+    adapts(FileSchemaField, interfaces.IFormData, Interface)
 
     url = None
+    allow_action = False
+
     filesize = None
     filename = None
     download = None
-    allow_action = False
+
+    template = TALTemplate(path.join(TEMPLATE_DIR, 'input.pt'))
 
     def prepareContentValue(self, value):
         if value is NO_VALUE or value is None:
@@ -63,27 +67,28 @@ class FileWidget(SchemaFieldWidget):
 
             if fileobj:
                 self.allow_action = True
-                if INamedFile.providedBy(fileobj):
+                if IFile.providedBy(fileobj):
                     self.filename = fileobj.filename
                     self.filesize = ISized(fileobj, None)
                 else:
                     self.filename = _(u'download', default=u"Download")
 
                 if ILocation.providedBy(content):
-                    self.url = absoluteURL(content, self.request)
+                    self.url = get_absolute_url(content, self.request)
                     self.download = "%s/++download++%s" % (
                         self.url, self.component.identifier)
 
 
 class DisplayFileWidget(DisplayFieldWidget):
-    grok.implements(IFileWidget)
-    grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
-    grok.template(str(DISPLAY))
+    implements(IFileWidget)
+    adapts(FileSchemaField, interfaces.IFormData, Interface)
 
     url = None
     filesize = None
     filename = None
     download = None
+
+    template = TALTemplate(path.join(TEMPLATE_DIR, 'display.pt'))
 
     def update(self):
         DisplayFieldWidget.update(self)
@@ -91,7 +96,7 @@ class DisplayFileWidget(DisplayFieldWidget):
         fileobj = self.component._field.get(content)
 
         if fileobj:
-            if INamedFile.providedBy(fileobj):
+            if IFile.providedBy(fileobj):
                 self.filename = fileobj.filename
                 self.filesize = ISized(fileobj, None)
 
@@ -103,7 +108,7 @@ class DisplayFileWidget(DisplayFieldWidget):
 class FileWidgetExtractor(WidgetExtractor):
     """A value extractor for a file widget (including image)
     """
-    grok.adapts(FileSchemaField, interfaces.IFormData, Interface)
+    adapts(FileSchemaField, interfaces.IFormData, Interface)
 
     def extract(self):
         """This method allows us to decide what we do with the different

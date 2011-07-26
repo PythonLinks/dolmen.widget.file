@@ -1,68 +1,59 @@
-from setuptools import setup, find_packages
+# -*- coding: utf-8 -*-
+
 from os.path import join
+from setuptools import setup, find_packages
 
 name = 'dolmen.widget.file'
-version = '1.0b2'
-readme = open(join('src', 'dolmen', 'widget', 'file', 'README.txt')).read()
+version = '2.0a1'
+readme = open('README.txt').read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
 install_requires = [
-    'dolmen.file >= 0.5.1',
+    'dolmen.file >= 2.0a1',
     'grokcore.component',
-    'grokcore.view',
     'setuptools',
+    'dolmen.location',
     'zope.interface',
     'zope.size',
     'zope.i18n',
     'zope.location',
-    'zope.traversing',
-    'zeam.form.base >= 1.0',
-    'zeam.form.ztk >= 1.0',
+    'dolmen.forms.base',
+    'dolmen.forms.ztk',
     'zope.i18nmessageid',
     ]
 
 tests_require = [
-    'zope.site',
-    'zope.testing',
-    'zope.app.testing', # needed for zeam
-    'zope.container',
     'zope.component',
-    'zope.publisher',
     'zope.schema',
-    'zope.security',
-    'zope.i18n',
+    'cromlech.browser [test]',
     ]
 
-setup(name = name,
-      version = version,
-      description = 'File widget for `zeam.form` and `Dolmen`',
-      long_description = readme + '\n\n' + history,
-      keywords = 'Grok Zope3 Zeam Dolmen Widget File',
-      author = 'Souheil Chelfouh',
-      author_email = 'trollfot@gmail.com',
-      url = '',
-      license = 'GPL',
+setup(name=name,
+      version=version,
+      description='File widget for Dolmen',
+      long_description=readme + '\n\n' + history,
+      keywords='Cromlech Dolmen Widget File',
+      author='The Dolmen Team',
+      author_email='dolmen@list.dolmen-project.org',
+      url='http://gitweb.dolmen-project.org',
+      license='ZPL',
       packages=find_packages('src', exclude=['ez_setup']),
       package_dir={'': 'src'},
-      namespace_packages = ['dolmen', 'dolmen.widget'],
-      include_package_data = True,
-      platforms = 'Any',
-      zip_safe = False,
-      tests_require = tests_require,
-      install_requires = install_requires,
-      extras_require = {'test': tests_require},
+      namespace_packages=['dolmen', 'dolmen.widget'],
+      include_package_data=True,
+      platforms='Any',
+      zip_safe=False,
+      tests_require=tests_require,
+      install_requires=install_requires,
+      extras_require={'test': tests_require},
       test_suite="dolmen.widget.file",
-      classifiers = [
+      classifiers=[
           'Environment :: Web Environment',
-          'Framework :: Zope3',
-          'Intended Audience :: Other Audience',
-          'License :: OSI Approved :: GNU General Public License (GPL)',
-          'Operating System :: OS Independent',
           'Programming Language :: Python',
           ],
       entry_points="""
       # -*- Entry points: -*-
-      [zeam.form.components]
+      [dolmen.collection.components]
       file = dolmen.widget.file.widget:register
       """,
 )
