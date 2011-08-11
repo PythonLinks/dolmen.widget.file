@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.0a2 (2011-08-11)
+------------------
+
+* We no longer rely on __nonzero__ to check the existance of an uploaded
+  file as this doesn't work work with ``cgi.FieldStorage``. We now simply
+  use a `get` with NO_VALUE as default.
+
+
 2.0a1 (2011-07-26)
 ------------------
 

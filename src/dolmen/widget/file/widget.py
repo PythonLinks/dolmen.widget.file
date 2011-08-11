@@ -125,5 +125,5 @@ class FileWidgetExtractor(WidgetExtractor):
         else:
             # Return the value if it exists or a marker uderstood by the
             # form datamanager.
-            value = self.request.form.get(self.identifier) or NO_VALUE
+            value = self.request.form.get(self.identifier, NO_VALUE)
         return (value, None)
