@@ -4,7 +4,7 @@ from os.path import join
 from setuptools import setup, find_packages
 
 name = 'dolmen.widget.file'
-version = '2.0a2'
+version = '2.0'
 readme = open('README.txt').read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
@@ -26,8 +26,7 @@ install_requires = [
 tests_require = [
     'zope.component',
     'zope.schema',
-    'cromlech.io [test]',
-    'cromlech.browser [test]',
+    'cromlech.browser [test] >= 0.5',
     ]
 
 setup(name=name,

@@ -60,7 +60,7 @@ need a form to edit the animal::
 Let's instanciate a Mammoth and try to call the form on it::
 
   >>> from zope.component import getMultiAdapter
-  >>> from cromlech.io.testing import TestRequest
+  >>> from cromlech.browser.testing import TestRequest
 
   >>> manfred = Mammoth()
   >>> request = TestRequest()
@@ -90,8 +90,8 @@ Now, let's try with a value::
     <div>
       <input type="radio" value="keep" checked="checked"
              class="noborder" name="form.field.luggage.action"
-             onclick="document.getElementById('form-field-luggage-input').disabled=true"
-             id="form-field-luggage-action" />
+             id="form-field-luggage-action"
+             onclick="document.getElementById('form-field-luggage-input').disabled=true" />
       <label for="form-field-luggage-action">Keep existing file</label>
       <br />
       <input type="radio" value="delete" class="noborder"
