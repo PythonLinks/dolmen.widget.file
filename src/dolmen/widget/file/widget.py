@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from os import path
-
-from cromlech.file import IFile, IFileField
+import crom
+from cromlech.file import IFile, IFileField,FileField
+from dolmen.forms.base.interfaces import IWidget, IWidgetExtractor
 from dolmen.location import get_absolute_url
 from dolmen.template import TALTemplate
 from dolmen.widget.file import MF as _
@@ -11,8 +12,8 @@ from dolmen.forms.base.widgets import DisplayFieldWidget, WidgetExtractor
 from dolmen.forms.ztk.fields import (
     SchemaField, SchemaFieldWidget, registerSchemaField)
 
-from grokcore.component import adapts
-from zope.interface import Interface, implements
+
+from zope.interface import Interface, implementer
 from zope.location import ILocation
 from zope.size.interfaces import ISized
 
@@ -32,16 +33,20 @@ def register():
 class IFileWidget(interfaces.IFieldWidget):
     """A widget that represents a file.
     """
+    
+from dolmen.forms.ztk.interfaces import ISchemaField
+class IFileSchemaField(ISchemaField):
+    pass
 
-
+@implementer (IFileSchemaField)
 class FileSchemaField(SchemaField):
     """A file field.
     """
 
-
+@crom.adapter
+@crom.target(IWidget)
+@crom.sources(IFileSchemaField, Interface, Interface)
 class FileWidget(SchemaFieldWidget):
-    implements(IFileWidget)
-    adapts(FileSchemaField, interfaces.IFormData, Interface)
 
     url = None
     allow_action = False
@@ -77,11 +82,11 @@ class FileWidget(SchemaFieldWidget):
                     self.download = "%s/++download++%s" % (
                         self.url, self.component.identifier)
 
-
+@crom.adapter
+@crom.name('display')
+@crom.target(IWidget)
+@crom.sources (IFileSchemaField, interfaces.IFormData, Interface)
 class DisplayFileWidget(DisplayFieldWidget):
-    implements(IFileWidget)
-    adapts(FileSchemaField, interfaces.IFormData, Interface)
-
     url = None
     filesize = None
     filename = None
@@ -103,11 +108,13 @@ class DisplayFileWidget(DisplayFieldWidget):
             self.download = "%s/++download++%s" % (
                 self.url, self.component.identifier)
 
-
+@crom.adapter
+@crom.target(IWidgetExtractor)
+@crom.sources(FileSchemaField, interfaces.IFormData, Interface)
 class FileWidgetExtractor(WidgetExtractor):
     """A value extractor for a file widget (including image)
     """
-    adapts(FileSchemaField, interfaces.IFormData, Interface)
+    
 
     def extract(self):
         """This method allows us to decide what we do with the different
