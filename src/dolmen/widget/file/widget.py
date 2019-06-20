@@ -4,7 +4,7 @@ from os import path
 import crom
 from cromlech.file import IFile, IFileField,FileField
 from dolmen.forms.base.interfaces import IWidget, IWidgetExtractor
-from dolmen.location import get_absolute_url
+from cromlech.location import get_absolute_url
 from dolmen.template import TALTemplate
 from dolmen.widget.file import MF as _
 from dolmen.forms.base import interfaces, NO_VALUE, NO_CHANGE

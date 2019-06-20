@@ -11,7 +11,7 @@ history = open(join('docs', 'HISTORY.txt')).read()
 install_requires = [
     'grokcore.component',
     'setuptools',
-    'dolmen.location',
+    'cromlech.location',
     'cromlech.file',
     'dolmen.template',
     'zope.interface',
